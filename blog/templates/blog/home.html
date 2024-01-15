@@ -1,0 +1,49 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="col-md-8">
+        {% for post in posts %}
+            <div class="card my-3 mx-4 shadow">
+                <div class="card-body">
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-5">
+                            <img class="img-thumbnail" src="/media/{{ post.images }}" alt="post-img">
+                        </div>
+                        <div class="col-md-7">
+                            <small>
+                                {{ post.author.first_name }} {{ post.author.last_name }} |
+                                {{ post.created }}</small>
+                            <hr>
+                            <a class="h3" href="{% url 'blog:post_details' post.slug %}">
+                                {{ post.title }}
+                            </a>
+                            <hr>
+                            <a href="{% url 'blog:category' post.category|slugify %}">
+                                <small>
+                                    {{ post.category }}
+                                </small>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col justify-content-center">
+                            <p class="text-justify mb-0 mt-2">
+                                {{ post.snippet }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-4">
+        <div class="card my-3 shadow">
+            <div class="card-body">
+                <p class="h3">lksrngkne</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

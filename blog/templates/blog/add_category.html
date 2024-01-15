@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+
+{% block title %}Добавить категорию{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="form-group">
+            <form action="{% url 'blog:add_category' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-secondary">Добавить категорию</button>
+            </form>
+        </div>
+    {% else %}
+        Чтобы редактировать посты, Вы должны войти в свой профиль.
+        <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Войти</a>
+    {% endif %}
+{% endblock %}

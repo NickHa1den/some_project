@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <div class="row py-2 bg-light">
+        <div class="d-flex justify-content-center col-md-2">
+            <a class="navbar-brand" href="{% url 'blog:home' %}">Real Blog!</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="d-flex col-md-5">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'blog:category_list' %}">Категории</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:add_category' %}">Добавить тэг</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:add_post' %}">Добавить пост</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-md-5 d-flex flex-row-reverse">
+            <ul class="nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:profile' %}">Профиль</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">Выйти</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:signup' %}">Регистрация</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>

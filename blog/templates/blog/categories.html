@@ -1,0 +1,24 @@
+{% extends '_base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% if cat_posts %}
+        <h1>{{ category }}</h1>
+        {% for post in cat_posts %}
+            <ul>
+                <li>
+                    <a href="{% url 'blog:post_details' post.slug %}">
+                        {{ post.title }}
+                    </a>
+                    <br>
+                    {{ post.author.first_name }} {{ post.author.last_name }}, {{ post.created }}
+                    <br>
+                    {{ post.snippet }}
+                </li>
+            </ul>
+        {% endfor %}
+    {% else %}
+        <h2>Таких категорий не существует</h2>
+    {% endif %}
+{% endblock %}

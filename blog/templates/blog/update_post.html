@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+
+{% block title %}Редактировать пост{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        {% if user.id == post.author.id %}
+            <div class="form-group">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form.media }}
+                    {{ form.as_p }}
+                    <button class="btn btn-secondary">Редактировать</button>
+                </form>
+            </div>
+        {% else %}
+            Это не ваш пост!
+        {% endif %}
+    {% else %}
+        Чтобы редактировать посты, Вы должны войти в свой профиль.
+        <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Войти</a>
+    {% endif %}
+{% endblock %}
