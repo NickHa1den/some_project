@@ -35,15 +35,14 @@
     {{ total_likes }} Likes
     <br>
     {% if user.is_authenticated %}
-        <form action="{% url 'blog:like_post' post.id %}" method="post">
+        <form action="{% url 'blog:like_post' post.slug %}" method="post">
             {% csrf_token %}
-
             {% if liked %}
-                <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-danger btn-small">
+                <button type="submit" name="post_id" value="{{ post.slug }}" class="btn btn-danger btn-small">
                     Не нравится
                 </button>
             {% else %}
-                <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-secondary btn-small">
+                <button type="submit" name="post_id" value="{{ post.slug }}" class="btn btn-secondary btn-small">
                     Нравится
                 </button>
             {% endif %}

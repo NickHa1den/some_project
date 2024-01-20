@@ -1,8 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.utils.text import slugify
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 
 from blog.models import Post, Category
@@ -56,7 +54,6 @@ class AddPostView(PermissionRequiredMixin, CreateView):
     slug_field = 'slug'
 
     def form_valid(self, form):
-        # form.instance.slug = slugify(form.instance.title)
         form.instance.author = self.request.user
         return super().form_valid(form)
 
@@ -105,8 +102,8 @@ class CategoryDetailView(ListView):
         return context
 
 
-def like_view(request, pk):
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+def like_view(request, slug):
+    post = get_object_or_404(Post, slug=request.POST.get('post_id'))
     liked = False
     if post.likes.filter(id=request.user.id).exists():
         post.likes.remove(request.user)
@@ -114,4 +111,4 @@ def like_view(request, pk):
     else:
         post.likes.add(request.user)
         liked = True
-    return HttpResponseRedirect(reverse('blog:post_details', args=[str(pk)]))
+    return HttpResponseRedirect(reverse('blog:post_details', args=[str(slug)]))
