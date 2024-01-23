@@ -1,17 +1,24 @@
 from django.contrib.auth import logout, get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
-from django.shortcuts import redirect
+from django.db import transaction
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView
 
 from accounts.forms import CustomUserRegistrationForm, CustomPasswordResetForm, \
     CustomSetPasswordForm, CustomLoginForm, UserProfileEditForm
-from accounts.models import Profile
 
 
 class UserProfileView(TemplateView):
     template_name = 'accounts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'REAL BLOG! | Профиль'
+        return context
 
 
 class CustomLoginView(LoginView):
@@ -61,6 +68,34 @@ def logout_view(request):
 
 class EditProfileView(UpdateView):
     model = get_user_model()
-    template_name = 'accounts/edit_profile.html'
     form_class = UserProfileEditForm
+    template_name = 'accounts/edit_profile.html'
     success_url = reverse_lazy('accounts:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user.profile
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'REAL BLOG! | Редактирование профиля'
+        if self.request.POST:
+            context['form'] = UserProfileEditForm(
+                self.request.POST,
+                self.request.FILES,
+                instance=self.request.user
+            )
+        else:
+            context['form'] = UserProfileEditForm(instance=self.request.user)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        user_form = context['form']
+        with transaction.atomic():
+            if all([form.is_valid(), user_form.is_valid()]):
+                user_form.save()
+                form.save()
+            else:
+                context.update({'user_form': user_form})
+                return self.render_to_response(context)
+        return super().form_valid(form)

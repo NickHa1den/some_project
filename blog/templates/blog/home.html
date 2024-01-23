@@ -4,44 +4,40 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="row mt-5 mx-5 pt-3">
-        <div class="col-md-8">
+    <div class="row">
+        <div class="col-md-8 my-3">
             {% for post in posts %}
-                <div class="card my-3 mx-4">
+                <div class="card mb-2" id="first-cart">
                     <div class="card-body">
-                        <div class="row justify-content-md-center">
-                            <div class="col-md-5">
-                                <img class="img-thumbnail" src="media/{{ post.images }}" alt="post-img">
+                        <small>
+                            {{ post.author.first_name }} {{ post.author.last_name }} |
+                            {{ post.created }}</small>
+                        <hr>
+                        <h3 class="card-title">
+                            <a class="h3" href="{% url 'blog:post_details' post.slug %}">
+                                {{ post.title }}
+                            </a>
+                        </h3>
+                        <a class="h6 text-secondary" href="{% url 'blog:category' post.category|slugify %}">
+                            <small>
+                                {{ post.category }}
+                            </small>
+                        </a>
+                        <hr>
+                        {% if post.images %}
+                            <div class="col">
+                                <img class="card-img-top" src="media/{{ post.images }}" alt="post-img">
                             </div>
-                            <div class="col-md-7">
-                                <small>
-                                    {{ post.author.first_name }} {{ post.author.last_name }} |
-                                    {{ post.created }}</small>
-                                <hr>
-                                <a class="h3" href="{% url 'blog:post_details' post.slug %}">
-                                    {{ post.title }}
-                                </a>
-                                <hr>
-                                <a href="{% url 'blog:category' post.category|slugify %}">
-                                    <small>
-                                        {{ post.category }}
-                                    </small>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col justify-content-center">
-                                <p class="text-justify mb-0 mt-2">
-                                    {{ post.snippet }}
-                                </p>
-                            </div>
-                        </div>
+                        {% endif %}
+                        <p class="card-text mt-3">
+                            {{ post.snippet }}
+                        </p>
                     </div>
                 </div>
             {% endfor %}
         </div>
-        <div class="col-md-4">
-            <div class="card my-3 shadow">
+        <div class="col-md-4 my-3">
+            <div class="card mb-2" id="second-cart">
                 <div class="card-body">
                     <p class="h3">lksrngkne</p>
                 </div>

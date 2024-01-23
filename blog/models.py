@@ -2,7 +2,7 @@ from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
+from pytils.translit import slugify
 
 
 class Post(models.Model):
@@ -21,8 +21,7 @@ class Post(models.Model):
         verbose_name_plural = 'Посты'
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
 
     def total_likes(self):
@@ -46,10 +45,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('blog:post_details', kwargs={'slug': self.slug})
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)

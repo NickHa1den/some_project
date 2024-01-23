@@ -3,52 +3,96 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-    <h1>{{ post.title }}</h1>
-    {{ post.author.first_name }} {{ post.author.last_name }}, {{ post.created }}
-    {% if user.is_authenticated %}
-        {% if user.id == post.author.id %}
-            |
-            <small>
-                <a href="{% url 'blog:update_post' post.slug %}">
-                    Редактировать
-                </a>
-            </small>
-            <small>
-                <a href="{% url 'blog:delete_post' post.slug %}">
-                    Удалить
-                </a>
-            </small>
-        {% endif %}
-    {% endif %}
-    <hr>
-    <br>
-    {% if post.images %}
-        <img class="img-thumbnail" src="{{ post.images.url }}" alt="Собака">
-    {% endif %}
-    {{ post.body|safe }}
-    <br>
-    <br>
-    <a href="{% url 'blog:home' %}" class="btn btn-secondary">Назад</a>
-    <br>
-    <hr>
-    <br>
-    {{ total_likes }} Likes
-    <br>
-    {% if user.is_authenticated %}
-        <form action="{% url 'blog:like_post' post.slug %}" method="post">
-            {% csrf_token %}
-            {% if liked %}
-                <button type="submit" name="post_id" value="{{ post.slug }}" class="btn btn-danger btn-small">
-                    Не нравится
-                </button>
-            {% else %}
-                <button type="submit" name="post_id" value="{{ post.slug }}" class="btn btn-secondary btn-small">
-                    Нравится
-                </button>
-            {% endif %}
-        </form>
-    {% else %}
-        <small><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы
-            поставить лайк!</small>
-    {% endif %}
+    <div class="row">
+        <div class="col-md-12 my-3">
+            <div class="card mb-2" id="detail-cart">
+                <div class="card-body">
+                    <small>
+                        {{ post.author.first_name }} {{ post.author.last_name }} |
+                        {{ post.created }}
+                    </small>
+                    <hr>
+                    <div class="card-title">
+                        <h3 class="my-2">
+                            {{ post.title }}
+                        </h3>
+                    </div>
+                    <a class="h6 text-secondary" href="{% url 'blog:category' post.category|slugify %}">
+                        <small>
+                            {{ post.category }}
+                        </small>
+                    </a>
+                    <hr>
+                    {% if post.images %}
+                        <div class="row">
+                            <div class="col-12 my-2 d-flex justify-content-center">
+                                <img src="{{ post.images.url }}" alt="post-img" style="width: 600px">
+                            </div>
+                        </div>
+                    {% endif %}
+                    <p class="card-text my-1">
+                        {{ post.body|safe }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#    <div class="row">#}
+    {#        <div class="col-md-8 my-3">#}
+    {#            <div class="card mb-2" id="first-cart">#}
+    {#                <h1>{{ post.title }}</h1>#}
+    {#                {{ post.author.first_name }} {{ post.author.last_name }}, {{ post.created }}#}
+    {#                {% if user.is_authenticated %}#}
+    {#                    {% if user.id == post.author.id %}#}
+    {#                        |#}
+    {#                        <small>#}
+    {#                            <a href="{% url 'blog:update_post' post.slug %}">#}
+    {#                                Редактировать#}
+    {#                            </a>#}
+    {#                        </small>#}
+    {#                        <small>#}
+    {#                            <a href="{% url 'blog:delete_post' post.slug %}">#}
+    {#                                Удалить#}
+    {#                            </a>#}
+    {#                        </small>#}
+    {#                    {% endif %}#}
+    {#                {% endif %}#}
+    {#                <hr>#}
+    {#                <br>#}
+    {#                {% if post.images %}#}
+    {#                    <img class="img-thumbnail" src="{{ post.images.url }}" alt="Собака">#}
+    {#                {% endif %}#}
+    {#                {{ post.body|safe }}#}
+    {#                <br>#}
+    {#                <br>#}
+    {#                <a href="{% url 'blog:home' %}" class="btn btn-secondary">Назад</a>#}
+    {#                <br>#}
+    {#                <hr>#}
+    {#                <br>#}
+    {#                {{ total_likes }} Likes#}
+    {#                <br>#}
+    {#                {% if user.is_authenticated %}#}
+    {#                    <form action="{% url 'blog:like_post' post.slug %}" method="post">#}
+    {#                        {% csrf_token %}#}
+    {#                        {% if liked %}#}
+    {#                            <button type="submit" name="post_id" value="{{ post.slug }}"#}
+    {#                                    class="btn btn-danger btn-small">#}
+    {#                                Не нравится#}
+    {#                            </button>#}
+    {#                        {% else %}#}
+    {#                            <button type="submit" name="post_id" value="{{ post.slug }}"#}
+    {#                                    class="btn btn-secondary btn-small">#}
+    {#                                Нравится#}
+    {#                            </button>#}
+    {#                        {% endif %}#}
+    {#                    </form>#}
+    {#                {% else %}#}
+    {#                    <small><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы#}
+    {#                        поставить лайк!</small>#}
+    {#                {% endif %}#}
+    {#            </div>#}
+    {#        </div>#}
+
+
 {% endblock %}

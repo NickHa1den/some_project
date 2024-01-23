@@ -1,5 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 
@@ -47,11 +48,11 @@ class PostDetailView(DetailView):
         return get_object_or_404(Post, slug=self.kwargs['slug'])
 
 
-class AddPostView(PermissionRequiredMixin, CreateView):
+class AddPostView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/add_post.html'
-    slug_field = 'slug'
+    # success_url = reverse_lazy('blog:post_details')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -63,20 +64,20 @@ class AddPostView(PermissionRequiredMixin, CreateView):
         return context
 
 
-class AddCategoryView(PermissionRequiredMixin, CreateView):
+class AddCategoryView(LoginRequiredMixin, CreateView):
     model = Category
     template_name = 'blog/add_category.html'
     fields = ('name',)
     success_url = reverse_lazy('blog:home')
 
 
-class UpdatePostView(PermissionRequiredMixin, UpdateView):
+class UpdatePostView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = EditForm
     template_name = 'blog/update_post.html'
 
 
-class DeletePostView(PermissionRequiredMixin, DeleteView):
+class DeletePostView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'blog/delete_post.html'
     success_url = reverse_lazy('blog:home')

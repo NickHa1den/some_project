@@ -5,8 +5,12 @@ from django.contrib.auth.forms import (UserCreationForm,
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, PasswordInput
+from django import forms
 
-from blog import forms
+from accounts.models import Profile
+
+
+# from blog import forms
 
 
 class CustomLoginForm(AuthenticationForm):
@@ -60,9 +64,14 @@ class CustomSetPasswordForm(SetPasswordForm):
 
 
 class UserProfileEditForm(ModelForm):
+    username = forms.CharField(max_length=100)
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    email = forms.EmailField(max_length=100)
+
     class Meta:
-        model = get_user_model()
-        fields = ['username', 'first_name', 'last_name', 'email']
+        model = Profile
+        fields = ['username', 'first_name', 'last_name', 'email', 'avatar']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -70,3 +79,5 @@ class UserProfileEditForm(ModelForm):
             field.widget.attrs['class'] = 'form-control'
         for field_name in ['username', 'email', 'first_name', 'last_name']:
             self.fields[field_name].help_text = None
+        # for field_name in ['username', 'email', 'first_name', 'last_name', 'avatar']:
+        #     self.fields[field_name].placeholder = None

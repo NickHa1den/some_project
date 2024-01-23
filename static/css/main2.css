@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Noto+Sans&family=Roboto&family=Montserrat&display=swap');
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    background-color: rgba(199, 199, 199, 0.49);
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.centered {
+    text-align: center;
+}
+
+a {
+    color: #1c61b2;
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: #2a88d0;
+    text-decoration: none;
+}
+
+hr {
+    margin: 0;
+}
+
+.custom-nav {
+    font-weight: 400;
+}
+
+#logo {
+    margin-left: 90px;
+}
+
+.custom-nav-links {
+    margin-right: 90px;
+}
+
+#first-cart {
+    margin-left: 90px;
+}
+
+#second-cart{
+    margin-right: 90px;
+}
+
+#third-cart{
+    margin-left: 90px;
+}
+
+#detail-cart {
+    margin-left: 90px;
+    margin-right: 90px;
+}

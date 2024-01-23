@@ -6,11 +6,9 @@
     <h1>Категории</h1>
     {% for item in category_list %}
         <li>
-            <h4>
-                <a href="{% url 'blog:category' item %}">
-                    {{ item }}
-                </a>
-            </h4>
+            <a href="{% url 'blog:category' item %}">
+                {{ item }}
+            </a>
         </li>
     {% endfor %}
 {% endblock %}
