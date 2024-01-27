@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans&display=swap');
+
+:root {
+    --nav-color: #0074b3;
+    --a-color: #008fa8;
+    --a-hover: #00acff;
+    --h-color: #0074b3;
+}
+
+body {
+    font-size: 1.1rem;
+    font-family: 'Montserrat', sans-serif;
+    background-color: red;
+}
+
+.custom-nav {
+    background-color: var(--nav-color);
+}
+
+.navbar {
+    font-weight: 600;
+}
+
+.nav-link, .brand-color {
+    color: white;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Raleway', sans-serif;
+    color: var(--h-color);
+}
+
+p {
+    font-family: 'Work Sans', sans-serif;
+}
+
+a {
+    color: var(--a-color);
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: var(--a-hover);
+    text-decoration: none;
+}
+
+.main-content {
+    margin-top: 5rem;
+}
+
+.fs-15 {
+    font-size: 15px;
+}
+
+.badge-light {
+    background-color: rgb(235, 235, 235);
+}
+
+.badge {
+    border-radius: .25rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.img {
+    width: 40px;
+    background-color: var(--nav-color);
+}

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'rest_framework',
     'debug_toolbar',
+    'taggit',
 
     'blog.apps.BlogConfig',
     'accounts.apps.AccountsConfig',

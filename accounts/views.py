@@ -14,6 +14,7 @@ from accounts.forms import CustomUserRegistrationForm, CustomPasswordResetForm, 
 
 class UserProfileView(TemplateView):
     template_name = 'accounts/profile.html'
+    model = get_user_model()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,7 +71,7 @@ class EditProfileView(UpdateView):
     model = get_user_model()
     form_class = UserProfileEditForm
     template_name = 'accounts/edit_profile.html'
-    success_url = reverse_lazy('accounts:profile')
+    # success_url = reverse_lazy('accounts:profile')
 
     def get_object(self, queryset=None):
         return self.request.user.profile
@@ -99,3 +100,6 @@ class EditProfileView(UpdateView):
                 context.update({'user_form': user_form})
                 return self.render_to_response(context)
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('accounts:profile', kwargs={'username': self.request.user})

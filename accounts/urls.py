@@ -23,6 +23,6 @@ urlpatterns = [
     path("password_reset/", CustomPasswordResetView.as_view(), name="password-reset"),
     path("password_reset/done", CustomPasswordResetConfirmView.as_view(), name="password-reset-done"),
     path("reset/done", CustomPasswordResetCompleteView.as_view(), name="password-reset-complete"),
-    path("profile/", UserProfileView.as_view(), name="profile"),
-    path("edit_profile/<int:pk>", EditProfileView.as_view(), name="edit-profile"),
+    path("<str:username>/", UserProfileView.as_view(), name="profile"),
+    path("<str:username>/edit/", EditProfileView.as_view(), name="edit-profile"),
 ]

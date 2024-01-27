@@ -12,7 +12,7 @@
                         <div class="card-body">
                             <h4 class="text-center">Редактирование профиля</h4>
                             <hr>
-                            <form method="POST" action="{% url 'accounts:edit-profile' user.pk %}"
+                            <form method="POST" action="{% url 'accounts:edit-profile' profile.user.username %}"
                                   enctype="multipart/form-data">
                                 {% csrf_token %}
                                 {{ form }}

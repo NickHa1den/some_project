@@ -1,49 +1,52 @@
-<nav class="navbar navbar-expand-xl navbar-dark bg-dark custom-nav">
-    <div class="container">
-        <a class="navbar-brand" id="logo" href="{% url 'blog:home' %}">REAL BLOG!</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarWithDropdown"
-                aria-controls="navbarWithDropdown" aria-expanded="false" aria-label="Toggle navigation">
+{% load static %}
+
+<nav class="navbar navbar-expand-lg fixed-top custom-nav">
+    <div class="container flex-row my-1">
+        <a href="{% url 'blog:home' %}" class="navbar-brand brand-color m-0 p-0">
+            <img class="img" src="{% static 'images/logo.png' %}" alt="logo">
+            REAL BLOG!
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo2"
+                aria-controls="navbarTogglerDemo2" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse show custom-nav-links" id="navbarWithDropdown">
-            <ul class="navbar-nav ms-auto ">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'blog:category_list' %}">Категории</a>
+                    <a href="{% url 'blog:category_list' %}" class="nav-link">Категории</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blog:add_post' %}">Добавить пост</a>
+                        <a href="{% url 'blog:add_post' %}" class="nav-link">Добавить пост</a>
                     </li>
                 {% endif %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
                         {{ user.username }}
                         <i class="fa-solid fa-user"></i>
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu">
                         {% if user.is_authenticated %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:profile' %}">Профиль</a>
+                            <li class="dropdown-item">
+                                <a href="{% url 'accounts:profile' user.username %}">Профиль</a>
                             </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Мои посты</a>
+                            <li class="dropdown-item">
+                                <a href="#">Мои посты</a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:logout' %}">Выйти</a>
+                            <li class="dropdown-item">
+                                <a href="{% url 'accounts:logout' %}">Выйти</a>
                             </li>
                         {% else %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:login' %}">Войти</a>
+                            <li class="dropdown-item">
+                                <a href="{% url 'accounts:login' %}">Войти</a>
                             </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'accounts:signup' %}">Регистрация</a>
+                            <hr class="dropdown-divider">
+                            <li class="dropdown-item">
+                                <a href="{% url 'accounts:signup' %}">Регистрация</a>
                             </li>
                         {% endif %}
                     </ul>
@@ -52,5 +55,6 @@
         </div>
     </div>
 </nav>
+
 
 

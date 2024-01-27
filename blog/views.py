@@ -1,12 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.checks import Tags
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
+from taggit.models import Tag
 
 from blog.models import Post, Category
 from blog.forms import PostForm, EditForm
-from blog.utils import PermissionRequiredMixin
 
 
 class HomePageView(ListView):
@@ -19,8 +20,10 @@ class HomePageView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         category_menu = Category.objects.all()
+        tags = Tag.objects.all()
         context['category_menu'] = category_menu
         context['title'] = 'Real Blog! | Главная'
+        context['tags'] = tags
         return context
 
     def get_object(self, queryset=None):
@@ -52,6 +55,8 @@ class AddPostView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/add_post.html'
+    login_url = 'accounts:login'
+
     # success_url = reverse_lazy('blog:post_details')
 
     def form_valid(self, form):
@@ -75,12 +80,14 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = EditForm
     template_name = 'blog/update_post.html'
+    login_url = 'accounts:login'
 
 
 class DeletePostView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'blog/delete_post.html'
     success_url = reverse_lazy('blog:home')
+    login_url = 'accounts:login'
 
 
 class CategoryListView(ListView):
@@ -100,6 +107,26 @@ class CategoryDetailView(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Real Blog! | {category.name}'
         context['cat_posts'] = cat_posts
+        return context
+
+
+class PostsByTagListView(ListView):
+    model = Post
+    template_name = 'blog/tagged_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+    tag = None
+
+    def get_queryset(self, **kwargs):
+        self.tag = Tag.objects.get(slug=self.kwargs['slug'])
+        queryset = Post.objects.all().filter(tags__slug=self.tag.slug)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = get_object_or_404(Tag, slug=self.kwargs['slug'])
+        context['title'] = f'Статьи по тегу: {self.tag.name}'
+        context['tag'] = tag
         return context
 
 

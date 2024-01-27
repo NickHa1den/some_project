@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from pytils.translit import slugify
+from taggit.managers import TaggableManager
 
 
 class Post(models.Model):
@@ -15,6 +16,7 @@ class Post(models.Model):
     images = models.ImageField(upload_to='images/', blank=True, null=True)
     likes = models.ManyToManyField(User, related_name='blog_posts', blank=True)
     category = models.ForeignKey('Category', on_delete=models.PROTECT)
+    tags = TaggableManager()
 
     class Meta:
         verbose_name = 'Пост'

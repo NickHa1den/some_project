@@ -3,12 +3,16 @@
 {% block title %}Категории{% endblock %}
 
 {% block content %}
-    <h1>Категории</h1>
-    {% for item in category_list %}
-        <li>
-            <a href="{% url 'blog:category' item %}">
-                {{ item }}
-            </a>
-        </li>
-    {% endfor %}
+    <div class="container main-content">
+        <div class="col">
+            <h3>Категории</h3>
+            {% for item in category_list %}
+                <li>
+                    <a href="{% url 'blog:category' item.slug %}">
+                        {{ item }}
+                    </a>
+                </li>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

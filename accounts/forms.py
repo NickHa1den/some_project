@@ -14,6 +14,11 @@ from accounts.models import Profile
 
 
 class CustomLoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Введите имя пользователя'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'placeholder': 'Введите пароль'}))
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'password']
@@ -21,10 +26,17 @@ class CustomLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields[field].widget.attrs['class'] = 'form-control'
+            self.fields[field].widget.attrs['class'] = 'form-control py-2'
 
 
 class CustomUserRegistrationForm(UserCreationForm):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Введите имя'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Введите фамилию'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Введите имя пользователя'}))
+    email = forms.CharField(widget=forms.EmailInput(attrs={'placeholder': 'Введите email'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Введите пароль'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Подтвердите пароль'}))
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
