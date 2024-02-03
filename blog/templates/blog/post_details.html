@@ -3,67 +3,47 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-    <div class="container main-content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card mb-2" id="detail-cart">
-                    <div class="card-body">
-                        <small>
-                            {{ post.author.first_name }} {{ post.author.last_name }} |
-                            {{ post.created }}
-                        </small>
-                        <div class="card-text">
-                            {% for tag in posts.tags.all %}
-                                <a href=""><small>{{ tag.name }}</small></a>
-                            {% endfor %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card my-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="card-text d-flex align-items-center justify-content-between mb-2">
+                            <h4 class="d-flex align-items-center p-0">
+                                <a href="{% url 'accounts:profile' username=post.author.username %}">
+                                    {{ post.author.first_name }} {{ post.author.last_name }}
+                                </a> |
+                                {{ post.created|date:'M d, Y' }}
+                            </h4>
+                            <span>
+                                    Комментарии
+                            </span>
                         </div>
-                        <hr>
-                        <div class="card-title">
-                            <h3 class="my-2">
-                                {{ post.title }}
-                            </h3>
-                        </div>
-                        <div class="my-1">
-                            <a class="h6 text-secondary" href="{% url 'blog:category' post.category.slug %}">
-                                <small>
+                    </div>
+                    <div class="row">
+                        <span class="card-text d-flex m-0">
+                                <a class="h6 text-secondary" href="{% url 'blog:category' post.category.slug %}">
                                     {{ post.category }}
-                                </small>
-                            </a></div>
-                        <hr>
-                        {% if post.images %}
-                            <div class="row">
-                                <div class="col-12 my-2 d-flex justify-content-center">
-                                    <img class="img-thumbnail" src="{{ post.images.url }}" alt="post-img"
-                                         style="width: 500px">
-                                </div>
-                            </div>
-                        {% endif %}
-                        <p class="card-text my-1">
-                            {{ post.body|safe }}
-                        </p>
-                        <a href="{% url 'blog:home' %}" class="btn btn-secondary mb-2">Назад</a>
-                        <hr>
-                        {{ total_likes }} Likes
-                        <br>
-                        {% if user.is_authenticated %}
-                            <form action="{% url 'blog:like_post' post.slug %}" method="post">
-                                {% csrf_token %}
-                                {% if liked %}
-                                    <button type="submit" name="post_id" value="{{ post.slug }}"
-                                            class="btn btn-danger btn-small">
-                                        Не нравится
-                                    </button>
-                                {% else %}
-                                    <button type="submit" name="post_id" value="{{ post.slug }}"
-                                            class="btn btn-secondary btn-small">
-                                        Нравится
-                                    </button>
-                                {% endif %}
-                            </form>
-                        {% else %}
-                            <small><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы
-                                поставить лайк!</small>
-                        {% endif %}
+                                </a>
+                        </span>
+                        <span>
+                            <small class="text-muted m-0">
+                                {% for tag in post.tags.all %}
+                                    <a href="{% url 'blog:posts-by-tags' tag.slug %}"
+                                       class="badge badge-light text-muted fw-light">{{ tag.name }}</a>
+                                {% endfor %}
+                            </small>
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="row mt-4">
+                        <div class="card-title">
+                            <h1 class="display-5 text-center">{{ post.title }}</h1>
+                        </div>
+                        <img src="{{ post.images.url }}" alt="pic" class="img-thumbnail border-0">
+                        <div class="card-text">
+                            <p class="text">{{ post.body|safe }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

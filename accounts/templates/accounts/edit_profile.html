@@ -1,23 +1,41 @@
-{% extends "_base.html" %}
+{% extends "accounts/_base.html" %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock title %}
 
 {% block content %}
-    <div class="cover">
+    {% include 'snippets/navbar.html' %}
+    {% include 'snippets/messages.html' %}
+    <div class="vh-100 d-flex justify-content-center align-items-center">
         <div class="container">
-            <div class="row mt-2 pt-3">
-                <div class="col-md-6 offset-md-3">
-                    <div class="card my-3 shadow">
-                        <div class="card-body">
-                            <h4 class="text-center">Редактирование профиля</h4>
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-6 col-mb-4">
+                    <div class="card border-0">
+                        <div class="card-body p-5">
+                            <div class="card-title">
+                                <h2 class="text-center">Редактирование профиля</h2>
+                            </div>
                             <hr>
-                            <form method="POST" action="{% url 'accounts:edit-profile' profile.user.username %}"
-                                  enctype="multipart/form-data">
-                                {% csrf_token %}
-                                {{ form }}
-                                <input class="btn btn-primary btn-block mb-0 mt-4" type="submit" value="Изменить">
-                            </form>
+                            <div>
+                                <form method="POST" action="{% url 'accounts:edit-profile' profile.user.username %}"
+                                      enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {% for field in form %}
+                                        <div class="form-group my-3">
+                                            {{ field }}
+                                        </div>
+                                        {% if field.errors %}
+                                            <div class="alert alert-danger my-3 py-1 fs-15 text-center">
+                                                {{ field.errors|striptags }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <hr>
+                                    <div class="form-group d-flex align-items-center justify-content-center mb-0">
+                                        <input class="btn btn-primary mb-0" type="submit" value="Сохранить изменения">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

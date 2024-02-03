@@ -12,7 +12,7 @@
 body {
     font-size: 1.1rem;
     font-family: 'Montserrat', sans-serif;
-    background-color: red;
+    /*background-color: red;*/
 }
 
 .custom-nav {
@@ -54,6 +54,18 @@ a:hover, a:focus {
     font-size: 15px;
 }
 
+.fs-20 {
+    font-size: 20px;
+}
+
+.fs-30 {
+    font-size: 30px;
+}
+
+.fs-40 {
+    font-size: 40px;
+}
+
 .badge-light {
     background-color: rgb(235, 235, 235);
 }
@@ -67,4 +79,12 @@ a:hover, a:focus {
 .img {
     width: 40px;
     background-color: var(--nav-color);
+}
+
+.img-cart {
+    border-radius: 5px;
+}
+
+.text {
+    text-align: justify;
 }

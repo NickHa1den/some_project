@@ -24,7 +24,7 @@ class CustomLoginForm(AuthenticationForm):
         fields = ['username', 'password']
 
     def __init__(self, *args, **kwargs):
-        super(CustomLoginForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control py-2'
 
@@ -44,7 +44,7 @@ class CustomUserRegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['class'] = 'form-control py-2'
         for field_name in ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']:
             self.fields[field_name].help_text = None
 
@@ -56,23 +56,46 @@ class CustomUserRegistrationForm(UserCreationForm):
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Введите старый пароль'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Введите новый пароль'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Подтвердите новый пароль'}))
+
     class Meta:
         model = get_user_model()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['class'] = 'form-control py-2'
         for field_name in ['old_password', 'new_password1', 'new_password2']:
             self.fields[field_name].help_text = None
 
 
 class CustomPasswordResetForm(PasswordResetForm):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({'class': 'form-control py-2'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Введите Ваш адрес электронной почты'})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError(f'Пользователя с email: {email} не существует')
+        return cleaned_data
 
 
 class CustomSetPasswordForm(SetPasswordForm):
-    pass
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Введите новый пароль'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Подтвердите новый пароль'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control py-2'
+        for field_name in ['new_password1', 'new_password2']:
+            self.fields[field_name].help_text = None
 
 
 class UserProfileEditForm(ModelForm):
@@ -91,5 +114,3 @@ class UserProfileEditForm(ModelForm):
             field.widget.attrs['class'] = 'form-control'
         for field_name in ['username', 'email', 'first_name', 'last_name']:
             self.fields[field_name].help_text = None
-        # for field_name in ['username', 'email', 'first_name', 'last_name', 'avatar']:
-        #     self.fields[field_name].placeholder = None

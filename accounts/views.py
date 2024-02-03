@@ -1,25 +1,56 @@
+from django.contrib import messages
 from django.contrib.auth import logout, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.sites.models import Site
 from django.db import transaction
-from django.shortcuts import redirect, render
+from django.http import Http404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView, UpdateView, DetailView, ListView
 
 from accounts.forms import CustomUserRegistrationForm, CustomPasswordResetForm, \
     CustomSetPasswordForm, CustomLoginForm, UserProfileEditForm
+from accounts.models import Profile
+from blog.models import Post
+from blog.utils import TagMixin
 
 
-class UserProfileView(TemplateView):
+class UserProfileView(TagMixin, DetailView):
+    model = Profile
     template_name = 'accounts/profile.html'
-    model = get_user_model()
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(User, username=self.kwargs['username'])
+
+    def get_queryset(self, **kwargs):
+        user = self.get_object(**kwargs)
+        queryset = Post.objects.filter(author__username=user).order_by('-created')
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'REAL BLOG! | Профиль'
+        context['user_posts'] = self.get_queryset()
         return context
+
+
+# class UserProfileView(TagMixin, TemplateView):
+#     template_name = 'accounts/profile.html'
+#     # model = User
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         try:
+#             user = get_object_or_404(User, username=self.kwargs.get('username'))
+#         except User.DoesNotExist:
+#             raise Http404('Пользователь не найден')
+#         context['users_posts'] = Post.objects.filter(author__username=user).order_by('-created')
+#         context['title'] = 'REAL BLOG! | Профиль'
+#         return context
 
 
 class CustomLoginView(LoginView):
@@ -30,6 +61,10 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse_lazy('blog:home')
 
+    def form_invalid(self, form):
+        messages.error(self.request, 'Введите правильные данные. Поля формы могу быть чувствительны к регистру.')
+        return super().form_invalid(form)
+
 
 class CustomRegistrationView(CreateView):
     form_class = CustomUserRegistrationForm
@@ -37,14 +72,26 @@ class CustomRegistrationView(CreateView):
     extra_context = {'title': 'Регистрация'}
     success_url = reverse_lazy('accounts:login')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Регистрация прошла успешно. Авторизуйтесь на сайт с Вашими данными.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.non_field_errors())
+        return super().form_invalid(form)
+
 
 class CustomPasswordResetView(PasswordResetView):
     form_class = CustomPasswordResetForm
     template_name = 'accounts/registration/password_reset_form.html'
+    success_url = reverse_lazy('accounts:password-reset-done')
+    email_template_name = 'accounts/registration/password_reset_email.txt'
+    html_email_template_name = 'accounts/registration/password_reset_email.html'
 
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):
     template_name = 'accounts/registration/password_reset_done.html'
+    success_url = reverse_lazy('accounts:password-reset-confirm')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -55,7 +102,7 @@ class CustomPasswordResetDoneView(PasswordResetDoneView):
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'accounts/registration/password_reset_confirm.html'
     form_class = CustomSetPasswordForm
-    success_url = reverse_lazy('password-reset-complete')
+    success_url = reverse_lazy('accounts:password-reset-complete')
 
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
@@ -71,7 +118,6 @@ class EditProfileView(UpdateView):
     model = get_user_model()
     form_class = UserProfileEditForm
     template_name = 'accounts/edit_profile.html'
-    # success_url = reverse_lazy('accounts:profile')
 
     def get_object(self, queryset=None):
         return self.request.user.profile
@@ -96,10 +142,15 @@ class EditProfileView(UpdateView):
             if all([form.is_valid(), user_form.is_valid()]):
                 user_form.save()
                 form.save()
+                messages.success(self.request, 'Данные профиля обновлены')
             else:
                 context.update({'user_form': user_form})
                 return self.render_to_response(context)
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.non_field_errors())
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse_lazy('accounts:profile', kwargs={'username': self.request.user})

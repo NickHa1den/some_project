@@ -12,24 +12,24 @@
         </button>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a href="{% url 'blog:category_list' %}" class="nav-link">Категории</a>
-                </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a href="{% url 'blog:add_post' %}" class="nav-link">Добавить пост</a>
                     </li>
-                {% endif %}
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        {{ user.username }}
-                        <i class="fa-solid fa-user"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% if user.is_authenticated %}
+                    {% if user.is_superuser or user.is_staff %}
+                        <li class="nav-item">
+                            <a href="{% url 'admin:index' %}" class="nav-link">Админ-панель</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            {{ request.user.username }}
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu">
                             <li class="dropdown-item">
-                                <a href="{% url 'accounts:profile' user.username %}">Профиль</a>
+                                <a href="{% url 'accounts:profile' request.user.username %}">Профиль</a>
                             </li>
                             <li class="dropdown-item">
                                 <a href="#">Мои посты</a>
@@ -40,17 +40,16 @@
                             <li class="dropdown-item">
                                 <a href="{% url 'accounts:logout' %}">Выйти</a>
                             </li>
-                        {% else %}
-                            <li class="dropdown-item">
-                                <a href="{% url 'accounts:login' %}">Войти</a>
-                            </li>
-                            <hr class="dropdown-divider">
-                            <li class="dropdown-item">
-                                <a href="{% url 'accounts:signup' %}">Регистрация</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:login' %}" class="nav-link">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:signup' %}" class="nav-link">Регистрация</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

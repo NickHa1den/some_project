@@ -9,7 +9,8 @@
             <div class="mb-3">
                 <form action="" method="post">
                     {% csrf_token %}
-                    <button class="btn btn-secondary">Удалить</button>
+                    <button class="btn btn-danger">Удалить</button>
+                    <a href="{% url 'accounts:profile' user.username %}" class="btn btn-primary">Отменить удаление</a>
                 </form>
             </div>
         {% else %}

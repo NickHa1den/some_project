@@ -3,9 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="container main-content">
         {% for post in posts %}
             {{ post }}
         {% endfor %}
-    </div>
 {% endblock %}
