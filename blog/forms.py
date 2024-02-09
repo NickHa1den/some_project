@@ -28,7 +28,7 @@ class PostForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control py-2', 'autocomplete': 'off'})
 
         self.fields['body'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
-        self.fields['full_description'].required = False
+        self.fields['body'].required = False
         self.fields['images'].required = False
 
 
