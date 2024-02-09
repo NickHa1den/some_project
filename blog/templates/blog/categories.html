@@ -3,26 +3,44 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="container d-flex align-items-center justify-content-center custom-container">
-        <div class="col">
-            {% if cat_posts %}
-                <h1>{{ category }}</h1>
-                {% for post in cat_posts %}
-                    <ul>
-                        <li>
-                            <a href="{% url 'blog:post_details' post.slug %}">
-                                {{ post.title }}
-                            </a>
-                            <br>
-                            {{ post.author.first_name }} {{ post.author.last_name }}, {{ post.created }}
-                            <br>
-                            {{ post.snippet }}
-                        </li>
-                    </ul>
-                {% endfor %}
-            {% else %}
-                <h2>Постов на эту тему нет</h2>
-            {% endif %}
+    {% if category %}
+        <h1 class="text-center mb-3">Посты из категории "{{ category }}"</h1>
+    {% endif %}
+    <div class="row">
+        <div class="col-lg-8 col-mb-6">
+            {% for post in cat_posts %}
+                <div class="card mb-3 border-0 custom-card">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card-body">
+                                <img src="{{ post.images.url }}" alt="img-cart"
+                                     class="rounded img-thumbnail border-0 custom-card card-img-top">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mb-2">
+                                    <a href="{{ post.get_absolute_url }}">
+                                        {{ post.title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text d-flex">
+                                    <small class="text-muted">
+                                        <span class="d-flex align-items-center mb-1">{{ post.created|date:'M d, Y' }}</span>
+                                        {% for tag in post.tags.all %}
+                                            <a href="{% url 'blog:posts-by-tags' tag.slug %}"
+                                               class="badge badge-light text-muted fw-light mb-1 tag">{{ tag.name }}</a>
+                                        {% endfor %}
+                                    </small>
+                                </p>
+                                <p class="card-text fs-15 mt-2">
+                                    {{ post.snippet }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

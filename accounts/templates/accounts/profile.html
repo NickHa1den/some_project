@@ -6,46 +6,46 @@
 {% block content %}
     <div class="row">
         <div class="col-md-3 my-3">
-            <div class="card border-rounded" id="first-cart">
+            <div class="card border-0 custom-card" id="first-cart">
                 <div class="card-body">
                     <div class="col-12 d-flex justify-content-center">
-                        <img src="{% if user.profile.avatar %} {{ user.profile.avatar.url }} {% else %} {% static 'images/default.png' %} {% endif %}"
-                             alt="user-avatar" class="rounded-circle">
+                        <img src="{% if user_page.profile.avatar %} {{ user_page.profile.avatar.url }} {% else %} {% static 'images/default.png' %} {% endif %}"
+                             alt="user-avatar" class="custom-card profile-image">
                     </div>
                     <div class="col my-1">
-                        <p class="my-2 text-center fs-30">{{ user.first_name }} {{ user.last_name }}
-                            {% if user == request.user %}
-                            <a class="btn btn-info btn-sm my-1"
-                               href="{% url 'accounts:edit-profile' user.username %}">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
+                        <p class="my-2 text-center fs-25">{{ user_page.first_name }} {{ user_page.last_name }}
+                            {% if user_page == request.user %}
+                                <a class="btn btn-outline btn-sm my-1 custom-btn"
+                                   href="{% url 'accounts:edit-profile' user.username %}">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
                             {% endif %}
                         </p>
                     </div>
                     <div class="col my-1">
-                        <p class="my-2 text-center fs-15">{{ user.username }}</p>
+                        <p class="my-2 text-center fs-15">{{ user_page.username }}</p>
                     </div>
                     <div class="col my-1">
-                        <p class="my-2 text-center fs-15">{{ user.email }}</p>
+                        <p class="my-2 text-center fs-15">{{ user_page.email }}</p>
                     </div>
-                    {% if user == request.user %}
+                    {% if user_page == request.user %}
                         <div class="col d-flex justify-content-center">
-                            <a class="btn btn-info btn-sm my-1"
+                            <a class="btn btn-outline btn-sm my-1 custom-btn"
                                href="{% url 'accounts:password-change' %}">Сменить пароль</a>
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
-
         <div class="col-md-9">
-            <h2 class="text-center">Опубликованные посты</h2>
+            <h2 class="text-center mt-2">Опубликованные посты</h2>
             {% for post in user_posts %}
-                <div class="card mb-2 border-0">
+                <div class="card mb-3 border-0 custom-card">
                     <div class="row">
                         <div class="col-4">
                             <div class="card-body d-flex align-items-center">
-                                <img src="{{ post.images.url }}" alt="img-cart" class="img-thumbnail border-0">
+                                <img src="{{ post.images.url }}" alt="img-cart"
+                                     class="img-thumbnail border-0 custom-card">
                             </div>
                         </div>
                         <div class="col-7">
@@ -67,16 +67,18 @@
                                 </p>
                             </div>
                         </div>
-                        {% if user == request.user %}
+                        {% if user_page == request.user %}
                             <div class="col-1">
                                 <div class="card-body">
                                     <div class="row mb-3">
-                                        <a href="{% url 'blog:update_post' post.slug %}" class="btn btn-primary btn-sm">
+                                        <a href="{% url 'blog:update_post' post.slug %}"
+                                           class="btn btn-outline-primary btn-sm">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                     </div>
                                     <div class="row">
-                                        <a href="{% url 'blog:delete_post' post.slug %}" class="btn btn-danger btn-sm">
+                                        <a href="{% url 'blog:delete_post' post.slug %}"
+                                           class="btn btn-outline-danger btn-sm">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     </div>
@@ -86,6 +88,7 @@
                     </div>
                 </div>
             {% endfor %}
+            {% if is_paginated %}{% include 'snippets/pagination.html' %}{% endif %}
         </div>
     </div>
 {% endblock content %}

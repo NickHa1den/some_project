@@ -3,16 +3,25 @@
 {% block title %}Регистрация{% endblock title %}
 
 {% block content %}
-    {% include 'snippets/messages.html' %}
+    <div>
+        {% include 'snippets/messages.html' %}
+    </div>
     <div class="vh-100 d-flex justify-content-center align-items-center">
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-lg-6 col-mb-4">
-                    <div class="card">
-                        <div class="card-body p-5">
+                    <div class="card border-0 p-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3 mt-0">
+                                <a class="" href="{% url 'blog:home' %}">
+                                    <i class="fa-solid fa-arrow-left mt-3"></i>
+                                    Вернуться назад
+                                </a>
+                            </div>
                             <div class="card-title">
                                 <h2 class="text-center">Регистрация</h2>
                             </div>
+
                             <hr>
                             <div>
                                 <form action="{% url 'accounts:signup' %}" method="post">
@@ -28,7 +37,8 @@
                                         {% endif %}
                                     {% endfor %}
                                     <div class="form-group d-flex align-items-center justify-content-center mb-3">
-                                        <input class="btn btn-success" type="submit" value="Зарегистрироваться">
+                                        <input class="btn btn-outline custom-btn" type="submit"
+                                               value="Зарегистрироваться">
                                     </div>
                                     <hr>
                                     <div class="small text-center mt-3 col-mb-3">

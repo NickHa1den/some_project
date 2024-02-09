@@ -4,13 +4,10 @@ from django.contrib.auth.forms import (UserCreationForm,
                                        AuthenticationForm)
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, PasswordInput
+from django.forms import ModelForm
 from django import forms
 
 from accounts.models import Profile
-
-
-# from blog import forms
 
 
 class CustomLoginForm(AuthenticationForm):

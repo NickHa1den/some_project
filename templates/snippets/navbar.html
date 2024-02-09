@@ -2,9 +2,9 @@
 
 <nav class="navbar navbar-expand-lg fixed-top custom-nav">
     <div class="container flex-row my-1">
-        <a href="{% url 'blog:home' %}" class="navbar-brand brand-color m-0 p-0">
+        <a href="{% url 'blog:home' %}" class="navbar-brand brand-color m-0 p-0 logo-link">
             <img class="img" src="{% static 'images/logo.png' %}" alt="logo">
-            REAL BLOG!
+            TechTitansTales
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo2"
                 aria-controls="navbarTogglerDemo2" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,31 +14,31 @@
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="{% url 'blog:add_post' %}" class="nav-link">Добавить пост</a>
+                        <a href="{% url 'blog:add_post' %}" class="nav-link logo-link">Добавить пост</a>
                     </li>
                     {% if user.is_superuser or user.is_staff %}
                         <li class="nav-item">
-                            <a href="{% url 'admin:index' %}" class="nav-link">Админ-панель</a>
+                            <a href="{% url 'admin:index' %}" class="nav-link logo-link">Админ-панель</a>
                         </li>
                     {% endif %}
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                        <a href="#" class="nav-link dropdown-toggle account-link" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
                             {{ request.user.username }}
                             <i class="fa-solid fa-user"></i>
                         </a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item">
-                                <a href="{% url 'accounts:profile' request.user.username %}">Профиль</a>
+                                <a class="logo-link" href="{% url 'accounts:profile' request.user.username %}">Профиль</a>
                             </li>
                             <li class="dropdown-item">
-                                <a href="#">Мои посты</a>
+                                <a class="logo-link" href="#">Мои посты</a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li class="dropdown-item">
-                                <a href="{% url 'accounts:logout' %}">Выйти</a>
+                                <a class="logo-link" href="{% url 'accounts:logout' %}">Выйти</a>
                             </li>
                         </ul>
                     </li>
