@@ -96,14 +96,19 @@ class CustomSetPasswordForm(SetPasswordForm):
 
 
 class UserProfileEditForm(ModelForm):
-    username = forms.CharField(max_length=100)
-    first_name = forms.CharField(max_length=100)
-    last_name = forms.CharField(max_length=100)
-    email = forms.EmailField(max_length=100)
+    username = forms.CharField(max_length=100,
+                               widget=forms.TextInput(attrs={'placeholder': 'Введите имя пользователя'}))
+    first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Введите имя'}))
+    last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Введите фамилию'}))
+    email = forms.EmailField(max_length=100, widget=forms.EmailInput(attrs={'placeholder': 'Введите email'}))
 
     class Meta:
         model = Profile
         fields = ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+        widgets = {
+            'username'
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

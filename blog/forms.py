@@ -19,7 +19,8 @@ class PostForm(forms.ModelForm):
             'snippet': forms.Textarea(attrs={'placeholder': 'Краткое описание', 'rows': 2}),
             'images': forms.FileInput(attrs={'placeholder': 'Фотография, иллюстрация'}),
             'tags': forms.TextInput(attrs={'placeholder': 'Метки'}),
-            'status': forms.Select(attrs={'placeholder': 'Статус поста'})
+            'status': forms.Select(attrs={'placeholder': 'Статус поста'}),
+            'body': forms.Textarea(attrs={'placeholder': 'Полное описание'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -27,7 +28,7 @@ class PostForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control py-2', 'autocomplete': 'off'})
 
-        self.fields['body'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
+        # self.fields['body'].widget.attrs.update({'class': 'form-control py-2'})
         self.fields['body'].required = False
         self.fields['images'].required = False
 
@@ -40,7 +41,8 @@ class EditForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'Название статьи'}),
             'snippet': forms.Textarea(attrs={'placeholder': 'Краткое описание', 'rows': 2}),
-            'images': forms.FileInput(attrs={'placeholder': 'Фотография, иллюстрация'})
+            'images': forms.FileInput(attrs={'placeholder': 'Фотография, иллюстрация'}),
+            'body': forms.Textarea(attrs={'placeholder': 'Полное описание'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -48,7 +50,7 @@ class EditForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control py-2', 'autocomplete': 'off'})
 
-        self.fields['body'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
+        # self.fields['body'].widget.attrs.update({'class': 'form-control py-2'})
         self.fields['body'].required = False
         self.fields['images'].required = False
 

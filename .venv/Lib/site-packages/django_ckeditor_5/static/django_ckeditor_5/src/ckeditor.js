@@ -92,5 +92,5 @@ ClassicEditor.builtinPlugins = [
     Mention,
     Style,
     HorizontalLine,
-    LinkImage
+    LinkImage,
 ];

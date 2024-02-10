@@ -6,19 +6,19 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-9">
             <div class="card my-3 custom-card border-0">
                 <div class="card-body">
                     <div class="row">
                         <div class="card-text d-flex align-items-center justify-content-between mb-2">
                             <h4 class="d-flex align-items-center p-0">
-                                <a href="{% url 'accounts:profile' username=post.author.username %}">
+                                <a href="{% url 'accounts:profile' slug=post.author.username %}">
                                     {{ post.author.first_name }} {{ post.author.last_name }}
                                 </a> |
                                 {{ post.created|date:'M d, Y' }}
                             </h4>
 
-                            <div class="d-flex justify-content-end">
+                            <div class="d-flex align-items-center justify-content-end">
                                 {% if user.is_authenticated %}
                                     <span class="me-1 num-of-likes" id="num">{{ post.likes.count }}</span>
                                     <button class="btn btn-link text-dark p-0 border-0 btn-outline-light">
@@ -59,21 +59,23 @@
                                 <h1 class="display-5 text-center">{{ post.title }}</h1>
                             </div>
                             <img src="{{ post.images.url }}" alt="pic" class="img-thumbnail border-0 custom-card">
-                            <div class="card-text">
-                                <p class="text">{{ post.body|safe }}</p>
-                            </div>
+                            <p class="card-text">
+                                {{ post.body|safe }}
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card border-0">
-                <div class="card-body custom-card">
-                    <div class="card-title mb-3">Комментарии</div>
-                    {% include 'blog/comments_list.html' %}
+            {% if user.is_authenticated %}
+                <div class="card border-0">
+                    <div class="card-body custom-card">
+                        <div class="card-title mb-3">Комментарии</div>
+                        {% include 'blog/comments_list.html' %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card my-3 border-0 custom-card">
                 <div class="card-body">
                     <div class="card-title">

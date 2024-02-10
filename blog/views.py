@@ -3,6 +3,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -209,9 +210,31 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
                 'created': comment.created.strftime('%b %d, %Y в %H:%M'),
                 'avatar': comment.author.profile.avatar.url,
                 'content': comment.content,
-                'get_absolute_url': comment.author.profile.get_absolute_url()
+                'get_absolute_url': comment.author.profile.slug
             }, status=200)
         return redirect(comment.post.get_absolute_url())
 
     def handle_no_permission(self):
         return JsonResponse({'error': 'Необходимо авторизоваться для добавления комментария'}, status=400)
+
+
+class SearchView(ListView):
+    model = Post
+    context_object_name = 'posts'
+    paginate_by = 10
+    allow_empty = True
+    template_name = 'blog/search.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        search_vector = SearchVector('body', weight='B', config='russian') + \
+                        SearchVector('title', weight='A', config='russian')
+        search_query = SearchQuery(query)
+        return (self.model.objects.annotate(
+            rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
+                )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Результаты поиска: {self.request.GET.get("q")}'
+        return context

@@ -25,6 +25,6 @@ urlpatterns = [
     path("password_reset/done/", CustomPasswordResetDoneView.as_view(), name="password-reset-done"),
     path("reset/<uidb64>/<token>/", CustomPasswordResetConfirmView.as_view(), name="password-reset-confirm"),
     path("reset/done/", CustomPasswordResetCompleteView.as_view(), name="password-reset-complete"),
-    path("<str:username>/", UserProfileView.as_view(), name="profile"),
-    path("<str:username>/update/", EditProfileView.as_view(), name="edit-profile"),
+    path("<str:slug>/", UserProfileView.as_view(), name="profile"),
+    path("<str:slug>/update/", EditProfileView.as_view(), name="edit-profile"),
 ]

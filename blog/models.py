@@ -1,5 +1,4 @@
 from ckeditor_uploader.fields import RichTextUploadingField
-from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -8,6 +7,7 @@ from mptt.models import MPTTModel
 from pytils.translit import slugify
 from taggit.managers import TaggableManager
 from unidecode import unidecode
+from modules.services.utils import unique_slugify
 
 
 class PublishedManager(models.Manager):
@@ -21,9 +21,10 @@ class Post(models.Model):
         PUBLISHED = 1, 'Опубликовано'
 
     title = models.CharField(verbose_name='Заголовок', max_length=255)
-    slug = models.SlugField(verbose_name='Слаг', max_length=255, unique=True)
+    slug = models.SlugField(verbose_name='Слаг', max_length=255, unique=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_posts', verbose_name='Автор')
-    body = CKEditor5Field(verbose_name='Полное описание', config_name='extends', null=True, blank=True)
+    body = RichTextUploadingField(verbose_name='Полное описание', null=True, blank=True)
+    # body = CKEditor5Field(verbose_name='Полное описание', config_name='extends', null=True, blank=True)
     created = models.DateTimeField(verbose_name='Время создания', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Время обновления', auto_now=True)
     snippet = models.CharField(verbose_name='Краткое описание', max_length=255)
@@ -42,9 +43,14 @@ class Post(models.Model):
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
 
+    # def save(self, *args, **kwargs):
+    #     self.slug = slugify(self.title)
+    #     return super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
-        return super().save(*args, **kwargs)
+        if not self.slug:
+            self.slug = unique_slugify(self, self.title)
+        super().save(*args, **kwargs)
 
     def total_likes(self):
         return self.likes.count()

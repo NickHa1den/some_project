@@ -1,11 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import logout, get_user_model
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.sites.models import Site
 from django.db import transaction
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.generic import CreateView, UpdateView, ListView
 
 from accounts.forms import CustomUserRegistrationForm, CustomPasswordResetForm, \
@@ -21,7 +26,7 @@ class UserProfileView(TagMixin, ListView):
     paginate_by = 2
 
     def get_object(self, queryset=None):
-        return get_object_or_404(User, username=self.kwargs['username'])
+        return get_object_or_404(User, username=self.kwargs['slug'])
 
     def get_queryset(self):
         user = self.get_object()
@@ -140,4 +145,14 @@ class EditProfileView(UpdateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse_lazy('accounts:profile', kwargs={'username': self.request.user})
+        return reverse_lazy('accounts:profile', kwargs={'slug': self.request.user})
+
+# @method_decorator(login_required, name='dispatch')
+# class ProfileFollowingView(View):
+#     model = Profile
+#
+#     def is_ajax(self):
+#         return self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+#
+#     def post(self, request, username):
+

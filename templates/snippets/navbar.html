@@ -10,8 +10,18 @@
                 aria-controls="navbarTogglerDemo2" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <div class="col-4 offset-2">
+            <form class="d-flex p-0 m-0 me-auto col-10" role="search" method="get" action="{% url 'blog:search' %}">
+                <input type="search" class="form-control me-2" placeholder="Поиск" aria-label="Search" name='q'
+                       autocomplete="off" id="search">
+                <button class="btn btn-outline-light" type="submit">Поиск</button>
+            </form>
+        </div>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+
+                </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a href="{% url 'blog:add_post' %}" class="nav-link logo-link">Добавить пост</a>
@@ -22,14 +32,16 @@
                         </li>
                     {% endif %}
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle account-link" role="button" data-bs-toggle="dropdown"
+                        <a href="#" class="nav-link dropdown-toggle account-link" role="button"
+                           data-bs-toggle="dropdown"
                            aria-expanded="false">
                             {{ request.user.username }}
                             <i class="fa-solid fa-user"></i>
                         </a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item">
-                                <a class="logo-link" href="{% url 'accounts:profile' request.user.username %}">Профиль</a>
+                                <a class="logo-link"
+                                   href="{% url 'accounts:profile' request.user.username %}">Профиль</a>
                             </li>
                             <li class="dropdown-item">
                                 <a class="logo-link" href="#">Мои посты</a>

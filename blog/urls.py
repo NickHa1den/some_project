@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import HomePageView, PostDetailView, AddPostView, UpdatePostView, DeletePostView, \
-    like, CategoryListView, CategoryDetailView, AddCategoryView, PostsByTagListView, CommentCreateView
+    like, CategoryListView, CategoryDetailView, AddCategoryView, PostsByTagListView, CommentCreateView, SearchView
 
 app_name = 'blog'
 
@@ -16,5 +16,5 @@ urlpatterns = [
     path('like/', like, name='like'),
     path('posts/tags/<slug:slug>/', PostsByTagListView.as_view(), name='posts-by-tags'),
     path('posts/<int:pk>/comment/create/', CommentCreateView.as_view(), name='comment-create'),
-    # path('posts/<slug:slug>/comment/create/', CommentCreateView.as_view(), name='comment-create'),
+    path('search/', SearchView.as_view(), name='search'),
 ]

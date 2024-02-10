@@ -169,3 +169,13 @@ a:hover, a:focus {
     height: 200px;
     border-radius: 50%;
 }
+
+/*.image_resized > img {*/
+/*    max-width: 600px;*/
+/*    height: auto;*/
+/*}*/
+
+/*.search-btn {*/
+/*    border-color: #ffffff;*/
+/*    color: #ffffff;*/
+/*}*/
