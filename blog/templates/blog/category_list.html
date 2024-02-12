@@ -21,7 +21,10 @@
                                     </a>
                                 </h5>
                                 <small class="text-muted">
-                                    <span>{{ post.created|date:'M d, Y' }}</span>
+                                    <a href="{% url 'accounts:profile' slug=post.author.username %}" class="me-2">
+                                        {{ post.author }}
+                                    </a>
+                                    <span>{{ post.public|date:'M d, Y' }}</span>
                                     {% for tag in post.tags.all %}
                                         <a href="{% url 'blog:posts-by-tags' tag.slug %}"
                                            class="badge badge-light text-muted">{{ tag.name }}</a>

@@ -2,6 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from pytils.translit import slugify
@@ -25,6 +26,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_posts', verbose_name='Автор')
     body = RichTextUploadingField(verbose_name='Полное описание', null=True, blank=True)
     # body = CKEditor5Field(verbose_name='Полное описание', config_name='extends', null=True, blank=True)
+    public = models.DateTimeField(verbose_name='Время публикации', null=True, blank=True, default=timezone.now)
     created = models.DateTimeField(verbose_name='Время создания', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Время обновления', auto_now=True)
     snippet = models.CharField(verbose_name='Краткое описание', max_length=255)

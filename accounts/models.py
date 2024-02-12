@@ -22,11 +22,6 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username}'
 
-    # def save(self, *args, **kwargs):
-    #     if not self.slug:
-    #         self.slug = unique_slugify(self, self.user.username)
-    #     super().save(*args, **kwargs)
-
     def get_absolute_url(self):
         return reverse('accounts:profile', kwargs={'username': self.user})
 

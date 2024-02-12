@@ -1,4 +1,5 @@
 import json
+import random
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,30 +14,40 @@ from taggit.models import Tag
 
 from blog.models import Post, Category, Comment
 from blog.forms import PostForm, EditForm, CommentForm
-from blog.utils import TagMixin
+from blog.utils import CategoryTagMixin
 
 
-class HomePageView(TagMixin, ListView):
+class HomePageView(CategoryTagMixin, ListView):
     model = Post
     template_name = 'blog/home.html'
     context_object_name = 'posts'
-    ordering = ['-created']
+    ordering = ['-public']
     slug_field = 'slug'
-    queryset = Post.published.all()
+    queryset = Post.published.all().order_by('-public')
     paginate_by = 6
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        category_list = Category.objects.all()
-        context['category_list'] = category_list
-        context['title'] = 'Real Blog! | Главная'
+        context['title'] = 'Главная'
         return context
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(Post, slug=self.kwargs[self.slug_field])
+    # def get_object(self, queryset=None):
+    #     return get_object_or_404(Post, slug=self.kwargs[self.slug_field])
 
 
-class PostDetailView(TagMixin, DetailView):
+# class AllPostView(ListView):
+#     model = Post
+#     queryset = Post.published.all()
+#     template_name = 'blog/posts_by_signed.html'
+#     context_object_name = 'posts'
+#     paginate_by = 6
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['title'] = 'Все посты'
+
+
+class PostDetailView(CategoryTagMixin, DetailView):
     model = Post
     template_name = 'blog/post_details.html'
 
@@ -54,6 +65,8 @@ class PostDetailView(TagMixin, DetailView):
         post_tags_ids = post.tags.values_list('id', flat=True)
         similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
         similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags', '-created')[:4]
+        similar_posts = list(similar_posts)  # Преобразуем QuerySet в список, чтобы применить shuffle
+        random.shuffle(similar_posts)
         context['title'] = f'{post.title}'
         context['total_likes'] = total_likes
         context['liked'] = liked
@@ -70,7 +83,10 @@ class AddPostView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        messages.success(self.request, 'Добавлена новая запись')
+        if form.instance.status == 1:
+            messages.success(self.request, 'Добавлена новая запись')
+        else:
+            messages.success(self.request, 'Создан черновик')
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -79,7 +95,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Real Blog! | Добавить пост'
+        context['title'] = 'Добавить пост'
         return context
 
 
@@ -105,7 +121,13 @@ class DeletePostView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = 'Пост удален'
 
     def get_success_url(self):
-        return reverse_lazy('accounts:profile', kwargs={'username': self.request.user})
+        return reverse_lazy('blog:drafts')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Удаление поста'
+        context['next'] = self.request.GET.get('next', '')  # Получаем значение параметра 'next' из GET запроса
+        return context
 
 
 class CategoryListView(ListView):
@@ -119,9 +141,10 @@ class CategoryListView(ListView):
         return get_object_or_404(Category, slug=self.kwargs[self.slug_field])
 
 
-class CategoryDetailView(ListView):
+class CategoryDetailView(CategoryTagMixin, ListView):
     model = Post
     template_name = 'blog/categories.html'
+    paginate_by = 10
 
     def get_object(self, queryset=None):
         category = get_object_or_404(Category, slug=self.kwargs['slug'])
@@ -131,16 +154,17 @@ class CategoryDetailView(ListView):
         category = get_object_or_404(Category, slug=self.kwargs['slug'])
         cat_posts = Post.objects.filter(category=category).order_by('-created')
         context = super().get_context_data(**kwargs)
-        context['title'] = f'Real Blog! | {category.name}'
+        context['title'] = f'{category.name}'
         context['cat_posts'] = cat_posts
         context['category'] = self.get_object()
         return context
 
 
-class PostsByTagListView(ListView):
+class PostsByTagListView(CategoryTagMixin, ListView):
     model = Post
     template_name = 'blog/tagged_posts.html'
     context_object_name = 'posts'
+    paginate_by = 10
 
     def get_object(self, queryset=None):
         tag = get_object_or_404(Tag, slug=self.kwargs['slug'])
@@ -150,8 +174,9 @@ class PostsByTagListView(ListView):
         return Post.objects.filter(tags__slug=self.kwargs.get('slug'))
 
     def get_context_data(self, **kwargs):
+        tag = get_object_or_404(Tag, slug=self.kwargs['slug'])
         context = super().get_context_data(**kwargs)
-        context['title'] = f'Посты с меткой'
+        context['title'] = f'{tag.name}'
         context['tag'] = self.get_object()
         return context
 
@@ -230,11 +255,53 @@ class SearchView(ListView):
         search_vector = SearchVector('body', weight='B', config='russian') + \
                         SearchVector('title', weight='A', config='russian')
         search_query = SearchQuery(query)
-        return (self.model.objects.annotate(
+        queryset = (self.model.objects.annotate(
             rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
-                )
+                    )
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Результаты поиска: {self.request.GET.get("q")}'
+        context['query'] = self.request.GET.get('q')
         return context
+
+
+class PostsBySignedView(LoginRequiredMixin, CategoryTagMixin, ListView):
+    model = Post
+    context_object_name = 'posts'
+    paginate_by = 6
+    login_url = 'accounts:login'
+    template_name = 'blog/posts_by_signed.html'
+
+    def get_queryset(self):
+        authors = self.request.user.profile.following.values_list('id', flat=True)
+        queryset = self.model.objects.filter(author__id__in=authors)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Посты от авторов, на которых вы подписаны'
+        return context
+
+
+class DraftsList(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'blog/drafts.html'
+    login_url = 'accounts:login'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Post.objects.filter(author=self.request.user, status=0).order_by('-created')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['drafts'] = self.get_queryset()
+        context['title'] = f'Ваши черновики'
+        return context
+
+
+# class DraftsDetail(LoginRequiredMixin, DetailView):
+#     model = Post
+#     template_name = 'blog/drafts_details.html'

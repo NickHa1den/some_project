@@ -44,7 +44,7 @@
                                    href="{% url 'accounts:profile' request.user.username %}">Профиль</a>
                             </li>
                             <li class="dropdown-item">
-                                <a class="logo-link" href="#">Мои посты</a>
+                                <a class="logo-link" href="{% url 'blog:signed' %}">Подписки</a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">

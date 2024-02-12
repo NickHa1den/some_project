@@ -26,6 +26,7 @@
                             <div>
                                 <form action="{% url 'accounts:login' %}" method="post">
                                     {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ next }}"/>
                                     <div class="form-group my-3">
                                         {{ form.username }}
                                     </div>

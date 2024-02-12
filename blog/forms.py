@@ -31,18 +31,21 @@ class PostForm(forms.ModelForm):
         # self.fields['body'].widget.attrs.update({'class': 'form-control py-2'})
         self.fields['body'].required = False
         self.fields['images'].required = False
+        self.fields['tags'].required = False
 
 
 class EditForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'body', 'snippet', 'images')
+        fields = ('title', 'body', 'snippet', 'images', 'tags', 'status')
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'Название статьи'}),
             'snippet': forms.Textarea(attrs={'placeholder': 'Краткое описание', 'rows': 2}),
-            'images': forms.FileInput(attrs={'placeholder': 'Фотография, иллюстрация'}),
-            'body': forms.Textarea(attrs={'placeholder': 'Полное описание'})
+            'images': forms.FileInput(attrs={'placeholder': 'Картинка'}),
+            'body': forms.Textarea(attrs={'placeholder': 'Полное описание'}),
+            'tags': forms.TextInput(attrs={'placeholder': 'Метки'}),
+            'status': forms.Select(attrs={'placeholder': 'Статус поста'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -53,6 +56,7 @@ class EditForm(forms.ModelForm):
         # self.fields['body'].widget.attrs.update({'class': 'form-control py-2'})
         self.fields['body'].required = False
         self.fields['images'].required = False
+        self.fields['tags'].required = False
 
 
 class CommentForm(forms.ModelForm):

@@ -7,8 +7,9 @@ from django.contrib.auth.views import LoginView, PasswordResetView, PasswordRese
     PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.sites.models import Site
 from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, UpdateView, ListView
@@ -17,10 +18,10 @@ from accounts.forms import CustomUserRegistrationForm, CustomPasswordResetForm, 
     CustomSetPasswordForm, CustomLoginForm, UserProfileEditForm
 from accounts.models import Profile
 from blog.models import Post
-from blog.utils import TagMixin
+from blog.utils import CategoryTagMixin
 
 
-class UserProfileView(TagMixin, ListView):
+class UserProfileView(CategoryTagMixin, ListView):
     model = Profile
     template_name = 'accounts/profile.html'
     paginate_by = 2
@@ -30,12 +31,17 @@ class UserProfileView(TagMixin, ListView):
 
     def get_queryset(self):
         user = self.get_object()
-        queryset = Post.objects.filter(author__username=user).order_by('-created')
+        # if self.request.user == user:  # Проверка, что текущий пользователь смотрит свой собственный профиль
+        #     queryset = Post.objects.filter(author__username=user).order_by('-created')
+        # else:
+        #     queryset = Post.published.filter(author__username=user).order_by('-created')
+        # return queryset
+        queryset = Post.published.filter(author__username=user).order_by('-created')
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'REAL BLOG! | Профиль'
+        context['title'] = 'Профиль'
         context['user_posts'] = self.get_queryset()
         context['user_page'] = self.get_object()
         return context
@@ -46,12 +52,17 @@ class CustomLoginView(LoginView):
     template_name = 'accounts/registration/login.html'
     extra_context = {'title': 'Авторизация'}
 
-    def get_success_url(self):
-        return reverse_lazy('blog:home')
+    # def get_success_url(self):
+    #     return reverse_lazy('blog:home')
 
     def form_invalid(self, form):
         messages.error(self.request, 'Введите правильные данные. Поля формы могу быть чувствительны к регистру.')
         return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next', '')  # Получаем значение параметра 'next' из GET запроса
+        return context
 
 
 class CustomRegistrationView(CreateView):
@@ -116,7 +127,7 @@ class EditProfileView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'REAL BLOG! | Редактирование профиля'
+        context['title'] = 'Редактирование профиля'
         if self.request.POST:
             context['form'] = UserProfileEditForm(
                 self.request.POST,
@@ -147,12 +158,33 @@ class EditProfileView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('accounts:profile', kwargs={'slug': self.request.user})
 
-# @method_decorator(login_required, name='dispatch')
-# class ProfileFollowingView(View):
-#     model = Profile
-#
-#     def is_ajax(self):
-#         return self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-#
-#     def post(self, request, username):
+
+@method_decorator(login_required, name='dispatch')
+class ProfileFollowingView(View):
+    model = Profile
+
+    def is_ajax(self):
+        return self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    def post(self, request, slug):
+        user = self.model.objects.get(slug=slug)
+        profile = request.user.profile
+        if profile in user.followers.all():
+            user.followers.remove(profile)
+            message = f'Подписаться на {user}'
+            status = False
+        else:
+            user.followers.add(profile)
+            message = f'Отписаться от {user}'
+            status = True
+            print(user.followers.all())
+        data = {
+            'username': profile.user.username,
+            'get_absolute_url': reverse('accounts:profile', kwargs={'slug': profile.slug}),
+            'slug': profile.slug,
+            'avatar': profile.avatar.url,
+            'message': message,
+            'status': status,
+        }
+        return JsonResponse(data, status=200)
 
