@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 
-{% block title %}Удалить пост{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 
@@ -11,6 +11,7 @@
                     <h3 class="text-center mb-4">Удалить пост "{{ post.title }}"?</h3>
                     <form action="" method="post">
                         {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}"/>
                         <div class="d-flex justify-content-center">
                             <div class="mx-3">
                                 <button class="btn btn-outline-danger">Удалить</button>

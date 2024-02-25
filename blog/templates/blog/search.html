@@ -1,0 +1,54 @@
+{% extends '_base.html' %}
+{% load blog_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% if posts %}
+
+        <div class="row">
+            <div class="col-lg-8 col-mb-6">
+                {% if title %}
+                    <h1 class="text-center mb-3">{{ title }}</h1>
+                {% endif %}
+                {% for post in posts %}
+                    <div class="card mb-3 border-0 custom-card">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="card-body">
+                                    <img src="{{ post.images.url }}" alt="img-cart"
+                                         class="rounded img-thumbnail border-0 custom-card card-img-top">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold mb-2">
+                                        <a href="{{ post.get_absolute_url }}">
+                                            {{ post.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text d-flex">
+                                        <small class="text-muted">
+                                            <span class="d-flex align-items-center mb-1">{{ post.public|date:'M d, Y' }}</span>
+                                            {% for tag in post.tags.all %}
+                                                <a href="{% url 'blog:posts-by-tags' tag.slug %}"
+                                                   class="badge badge-light text-muted fw-light mb-1">{{ tag.name }}</a>
+                                            {% endfor %}
+                                        </small>
+                                    </p>
+                                    <p class="card-text fs-15 mt-2">
+                                        {{ post.snippet }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% show_latest_posts 2 %}
+        </div>
+        {% if is_paginated %}{% include 'snippets/pagination.html' %}{% endif %}
+    {% else %}
+        <h1 class="text-center mb-3">По вашему запросу ничего не найдено</h1>
+    {% endif %}
+{% endblock %}

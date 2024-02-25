@@ -1,0 +1,14 @@
+<div class="card my-3 border-0 custom-card">
+    <h3 class="text-center mt-2">Самые комментируемые</h3>
+    {% for post in most_commented_posts %}
+        <div class="card-body my-0">
+            <h6 class="fw-bold mb-1 mt-0">
+                <a class="mt-1" href="{{ post.get_absolute_url }}">
+                    {{ post.title }}
+                </a>
+            </h6>
+        <hr class="my-2">
+        </div>
+    {% endfor %}
+
+</div>

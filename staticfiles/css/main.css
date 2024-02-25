@@ -162,3 +162,15 @@ a:hover, a:focus {
     height: 60px;
     border-radius: 25%;
 }
+
+.profile-image {
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+
+.image_resized > img {
+    max-width: 600px;
+    height: auto;
+}

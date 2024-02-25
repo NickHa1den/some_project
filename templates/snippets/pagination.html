@@ -3,7 +3,7 @@
 
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&q={{ request.GET.query }}{% endif %}">
                     Назад
                 </a>
             </li>
@@ -16,13 +16,13 @@
         {% for num_page in page_obj.paginator.page_range %}
             {% if num_page == page_obj.number %}
                 <li class="page-item active">
-                    <a class="page-link" href="#">
+                    <a class="page-link" href="#{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                         {{ num_page }}
                     </a>
                 </li>
             {% else %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ num_page }}">
+                    <a class="page-link" href="?page={{ num_page }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                         {{ num_page }}
                     </a>
                 </li>
@@ -31,7 +31,7 @@
 
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                     Вперед
                 </a>
             </li>
@@ -42,3 +42,6 @@
         {% endif %}
     </ul>
 </nav>
+
+
+{#<li class="page-item"><a class="page-link" href="?page={{ num_page }}{% if request.GET.q %}&query={{ request.GET.query }}{% endif %}">{{ num_page }}</a></li>#}

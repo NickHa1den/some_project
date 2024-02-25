@@ -28,67 +28,183 @@
                     <div class="col my-1">
                         <p class="my-2 text-center fs-15">{{ user_page.email }}</p>
                     </div>
-                    {% if user_page == request.user %}
+                    {% if request.user == user_page %}
                         <div class="col d-flex justify-content-center">
                             <a class="btn btn-outline btn-sm my-1 custom-btn"
                                href="{% url 'accounts:password-change' %}">Сменить пароль</a>
                         </div>
+                    {% else %}
+                        {% if request.user.is_authenticated and request.user != user_page.profile %}
+                            <div class="col d-flex justify-content-center">
+                                {% if request.user.profile in user_page.profile.followers.all %}
+                                    <button class="btn unfollow btn-follow"
+                                            data-slug="{{ user_page.profile.slug }}">
+                                        Отписаться от {{ user_page.username }}
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-outline follow btn-follow"
+                                            data-slug="{{ user_page.profile.slug }}">
+                                        Подписаться на {{ user_page.username }}
+                                    </button>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     {% endif %}
+                </div>
+            </div>
+            <div class="card border-0 custom-card mt-3" id="first-cart">
+                <div class="card-body">
+                    <h4 class="text-center">Подписки</h4>
+                    <div class="row">
+                        <div class="col-12">
+                            {% for following in user_page.profile.following.all %}
+                                <a href="{% url 'accounts:profile' following.slug %}">
+                                    <img src="{{ following.avatar.url }}" class="follow-list"
+                                         alt="{{ following }}"/>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-0 custom-card mt-3" id="first-cart">
+                <div class="card-body">
+                    <h4 class="text-center">Подписчики</h4>
+                    <div class="row">
+                        <div class="col-12 followers-box">
+                            {% for follower in user_page.profile.followers.all %}
+                                <a href="{% url 'accounts:profile' follower.slug %}" id="user-slug-{{ follower.slug }}">
+                                    <img src="{{ follower.avatar.url }}" class="follow-list"
+                                         alt="{{ follower }}"/>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-9">
-            <h2 class="text-center mt-2">Опубликованные посты</h2>
-            {% for post in user_posts %}
-                <div class="card mb-3 border-0 custom-card">
-                    <div class="row">
-                        <div class="col-4">
-                            <div class="card-body d-flex align-items-center">
-                                <img src="{{ post.images.url }}" alt="img-cart"
-                                     class="img-thumbnail border-0 custom-card">
-                            </div>
-                        </div>
-                        <div class="col-7">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold mb-2">
-                                    <a href="{{ post.get_absolute_url }}">
-                                        {{ post.title }}
-                                    </a>
-                                </h5>
-                                <small class="text-muted">
-                                    <span>{{ post.created|date:'M d, Y' }}</span>
-                                    {% for tag in post.tags.all %}
-                                        <a href="{% url 'blog:posts-by-tags' tag.slug %}"
-                                           class="badge badge-light text-muted">{{ tag.name }}</a>
-                                    {% endfor %}
-                                </small>
-                                <p class="card-text fs-15">
-                                    {{ post.snippet }}
-                                </p>
-                            </div>
-                        </div>
-                        {% if user_page == request.user %}
-                            <div class="col-1">
-                                <div class="card-body">
-                                    <div class="row mb-3">
-                                        <a href="{% url 'blog:update_post' post.slug %}"
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                    </div>
-                                    <div class="row">
-                                        <a href="{% url 'blog:delete_post' post.slug %}"
-                                           class="btn btn-outline-danger btn-sm">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </div>
+            {% if user_posts %}
+                <h1 class="text-center mt-2">Опубликованные посты
+                    {% if user_page == request.user %}
+                       | <a class="btn btn-outline custom-btn btn-sm" href="{% url 'blog:drafts' %}">Перейти к
+                            черновикам</a>
+                    {% endif %}
+                </h1>
+                {% for post in user_posts %}
+                    <div class="card mb-3 border-0 custom-card">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="card-body d-flex align-items-center">
+                                    <img src="{{ post.images.url }}" alt="img-cart"
+                                         class="img-thumbnail border-0 custom-card">
                                 </div>
                             </div>
-                        {% endif %}
+                            <div class="col-7">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold mb-2">
+                                        <a href="{{ post.get_absolute_url }}">
+                                            {{ post.title }}
+                                        </a>
+                                    </h5>
+                                    <small class="text-muted">
+                                        <span>{{ post.public|date:'M d, Y' }}</span>
+                                        {% for tag in post.tags.all %}
+                                            <a href="{% url 'blog:posts-by-tags' tag.slug %}"
+                                               class="badge badge-light text-muted">{{ tag.name }}</a>
+                                        {% endfor %}
+                                    </small>
+                                    <p class="card-text fs-15">
+                                        {{ post.snippet }}
+                                    </p>
+                                </div>
+                            </div>
+                            {#                            {% if user_page == request.user %}#}
+                            {#                                <div class="col-1">#}
+                            {#                                    <div class="card-body">#}
+                            {#                                        <div class="row mb-3">#}
+                            {#                                            <a href="{% url 'blog:update_post' post.slug %}"#}
+                            {#                                               class="btn btn-outline-primary btn-sm">#}
+                            {#                                                <i class="fa-solid fa-pen-to-square"></i>#}
+                            {#                                            </a>#}
+                            {#                                        </div>#}
+                            {#                                        <div class="row">#}
+                            {#                                            <a href="{% url 'blog:delete_post' post.slug %}"#}
+                            {#                                               class="btn btn-outline-danger btn-sm">#}
+                            {#                                                <i class="fa-solid fa-trash"></i>#}
+                            {#                                            </a>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                            {% endif %}#}
+                        </div>
                     </div>
+                {% endfor %}
                 </div>
-            {% endfor %}
-            {% if is_paginated %}{% include 'snippets/pagination.html' %}{% endif %}
-        </div>
+            {% else %}
+                <h1 class="text-center mt-2">Вы не опубликовали еще ни одного поста</h1>
+            {% endif %}
     </div>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        let followBtn = document.querySelector('.btn-follow');
+        let followerBox = document.querySelector('.followers-box');
+
+        followBtn.addEventListener('click', event => {
+            const userSlug = event.target.dataset.slug
+            console.log(userSlug)
+            fetch(`/accounts/${userSlug}/follow/`, {
+                method: 'POST',
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    const isBtnPrimary = followBtn.classList.contains('follow');
+                    const message = data.message || '';
+
+                    if (isBtnPrimary) {
+                        followBtn.classList.remove('follow');
+                        followBtn.classList.add('unfollow');
+                    } else {
+                        followBtn.classList.remove('unfollow');
+                        followBtn.classList.add('follow');
+                    }
+                    if (data.status) {
+                        followerBox.innerHTML += `
+                                                <a href="${data.get_absolute_url}" id="user-slug-${data.slug}">
+                                                    <img src="${data.avatar}" class="follow-list" alt="${data.slug}"/>
+                                                </a>
+                                                `;
+                        console.log(data.slug)
+                        console.log(data.get_absolute_url)
+                    } else {
+                        const currentUserSlug = document.querySelector(`#user-slug-${data.slug}`)
+                        currentUserSlug && currentUserSlug.remove();
+                    }
+                    followBtn.innerHTML = message;
+                }).catch(error => {
+                console.log(error);
+            });
+        })
+    </script>
+
 {% endblock content %}

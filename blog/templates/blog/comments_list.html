@@ -11,7 +11,7 @@
                         </div>
                         <div class="col-md-11">
                             <h5 class="card-title mt-0 ms-3">
-                                <a href="{{ node.author.profile.get_absolute_url }}">{{ node.author }}</a>
+                                <a href="{% url 'accounts:profile' slug=node.author.username %}">{{ node.author }}</a>
                             </h5>
                             <small class="fs-6 ms-3">{{ node.created }}</small>
                             <p class="card-text mt-2 ms-3">
