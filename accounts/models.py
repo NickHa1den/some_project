@@ -2,6 +2,7 @@ import uuid
 
 from PIL import Image
 from django.contrib.auth.models import User, AbstractUser
+from django.core.mail import send_mail
 from django.db import models
 from django.urls import reverse
 
@@ -14,6 +15,7 @@ class Profile(models.Model):
     slug = models.SlugField(verbose_name='Для адресной строки', blank=True, max_length=255, unique=True)
     following = models.ManyToManyField('self', symmetrical=False, related_name='followers', verbose_name='Подписки',
                                        blank=True)
+    is_verified_email = models.BooleanField(default=False, verbose_name='Подтвержденный email')
 
     class Meta:
         verbose_name = 'Профиль'
@@ -34,3 +36,22 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.avatar.path)
+
+
+class EmailVerification(models.Model):
+    code = models.UUIDField(verbose_name='Уникальный идентификатор', unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    expiration = models.DateTimeField()
+
+    def __str__(self):
+        return f'Подтверждение email для пользователя {self.user}'
+
+    def send_verification_email(self):
+        send_mail(
+            'Subject here',
+            'Here is the message',
+            'from@',
+            [self.user.email],
+            fail_silently=False
+        )

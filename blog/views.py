@@ -8,7 +8,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 from taggit.models import Tag
 
@@ -235,7 +235,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
                 'created': comment.created.strftime('%b %d, %Y в %H:%M'),
                 'avatar': comment.author.profile.avatar.url,
                 'content': comment.content,
-                'get_absolute_url': comment.author.profile.slug
+                'get_absolute_url': reverse('accounts:profile', kwargs={'slug': comment.author.profile.slug})
             }, status=200)
         return redirect(comment.post.get_absolute_url())
 
@@ -300,7 +300,6 @@ class DraftsList(LoginRequiredMixin, ListView):
         context['drafts'] = self.get_queryset()
         context['title'] = f'Ваши черновики'
         return context
-
 
 # class DraftsDetail(LoginRequiredMixin, DetailView):
 #     model = Post

@@ -88,6 +88,15 @@
                         </div>
                     </div>
                 {% endif %}
+            {% else %}
+                <div class="card border-0">
+                    <div class="card-body custom-card">
+                        <h3 class="text-center">
+                            Комментарии могут оставлять только авторизованные пользователи.
+                            <a href="{% url 'accounts:login' %}">Войти</a>
+                        </h3>
+                    </div>
+                </div>
             {% endif %}
         </div>
         {% if not post.status == 0 %}

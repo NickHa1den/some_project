@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'taggit',
     'mptt',
+    'django_extensions',
+    'sslserver',
 
     'blog.apps.BlogConfig',
     'accounts.apps.AccountsConfig',
@@ -335,7 +337,7 @@ CKEDITOR_CONFIGS = {
             'codesnippet',
         ]),
     }
-}
+}   
 
 TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
 

@@ -1,3 +1,6 @@
+import uuid
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (UserCreationForm,
                                        PasswordChangeForm, PasswordResetForm, SetPasswordForm, UserChangeForm,
@@ -6,8 +9,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django import forms
+from django.utils.timezone import now
 
-from accounts.models import Profile
+from accounts.models import Profile, EmailVerification
 
 
 class CustomLoginForm(AuthenticationForm):
@@ -50,6 +54,13 @@ class CustomUserRegistrationForm(UserCreationForm):
         if get_user_model().objects.filter(email=email).exists():
             raise ValidationError('Такой E-mail уже существует!')
         return email
+
+    # def save(self, commit=True):
+    #     user = super().save(commit=True)
+    #     expiration = now() + timedelta(hours=48)
+    #     record = EmailVerification.objects.create(code=uuid.uuid4(), user=user, expiration=expiration)
+    #     record.send_verification_email()
+    #     return user
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):

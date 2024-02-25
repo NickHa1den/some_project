@@ -12,3 +12,7 @@ media
 
 # Environments
 .env
+
+# SSL
+/cert.pem
+/key.pem
